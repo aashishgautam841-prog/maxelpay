@@ -24,14 +24,14 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.MAXELPAY_API_KEY}`
+        "Authorization": `Bearer ${process.env.MAXELPAY_API_SECRET}`
       },
       body: JSON.stringify({
         amount: amount,
         currency: "USDT",
         order_id: orderId,
-        success_url: "https://greenleaf.website//payment-success",
-        cancel_url: "https://greenleaf.website//payment-failed"
+        success_url: "https://greenleaf.website/payment-success",
+        cancel_url: "https://greenleaf.website/payment-failed"
       })
     });
 
