@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         currency: "USDT",
         order_id: orderId,
         success_url: "https://greenleaf.website/success",
-        cancel_url: "https://grennleaf.website/cancel"
+        cancel_url: "https://greenleaf.website/cancel"
       })
     });
 
