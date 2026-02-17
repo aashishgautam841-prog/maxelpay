@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           order_id: orderId,
           amount: amount,
-          currency: "USDT",
+          currency: "USD",
           success_url: "https://greenleaf.website/payment-success",
           cancel_url: "https://greenleaf.website/payment-failed"
         })
