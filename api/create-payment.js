@@ -12,6 +12,8 @@ export default async function handler(req, res) {
   try {
     const { amount, orderId, email, name } = req.body;
 
+    const apiKey = process.env.MAXELPAY_API_KEY;
+    
     const secret = process.env.MAXELPAY_API_SECRET;
    
     const timestamp = Math.floor(Date.now() / 1000);
@@ -58,4 +60,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: err.message });
   }
 }
+
 
