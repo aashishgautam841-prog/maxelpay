@@ -9,10 +9,6 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
   try {
     const { amount, orderId, email, name } = req.body;
 
@@ -36,16 +32,12 @@ export default async function handler(req, res) {
     };
 
     const key = CryptoJS.enc.Utf8.parse(secret);
-    const iv = CryptoJS.enc.Utf8.parse(secret.substring(0, 16));
+    const iv = CryptoJS.enc.Utf8.parse(secret.slice(0, 16));
 
     const encrypted = CryptoJS.AES.encrypt(
       JSON.stringify(payload),
       key,
-      {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-      }
+      { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
     ).toString();
 
     const response = await fetch(
@@ -62,7 +54,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     return res.status(200).json(data);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
