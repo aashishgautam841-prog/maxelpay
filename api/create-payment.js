@@ -1,24 +1,36 @@
+import CryptoJS from "crypto-js";
+
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
-  }
-
   try {
-    const { amount, orderId } = req.body;
+    const { amount, orderId, email, name } = req.body;
 
-    if (!amount || !orderId) {
-      return res.status(400).json({ error: "amount or orderId missing" });
-    }
+    const secret = process.env.MAXELPAY_API_SECRET;
+    const apiKey = process.env.MAXELPAY_API_KEY;
 
     const timestamp = Math.floor(Date.now() / 1000);
+
+    const payload = {
+      orderID: orderId,
+      amount: amount,
+      currency: "USD",
+      timestamp: timestamp,
+      userName: name,
+      siteName: "GreenLeaf",
+      userEmail: email,
+      redirectUrl: "https://greenleaf.website/payment-success",
+      websiteUrl: "https://greenleaf.website",
+      cancelUrl: "https://greenleaf.website/payment-failed",
+      webhookUrl: "https://greenleaf.website/api/webhook"
+    };
+
+    const key = CryptoJS.enc.Utf8.parse(secret);
+    const iv = CryptoJS.enc.Utf8.parse(secret.substring(0, 16));
+
+    const encrypted = CryptoJS.AES.encrypt(
+      JSON.stringify(payload),
+      key,
+      { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+    ).toString();
 
     const response = await fetch(
       "https://api.maxelpay.com/v1/prod/merchant/order/checkout",
@@ -26,31 +38,17 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.MAXELPAY_API_SECRET}`
+          "api-key": apiKey
         },
-        body: JSON.stringify({
-          orderID: orderId,
-          amount: amount,
-          userEmail: "aashishgautam841@gmail.com",
-          currency: "USD",
-          timestamp: timestamp,
-          redirectUrl: "https://greenleaf.website/payment-success",
-          cancelUrl: "https://greenleaf.website/payment-failed"
-        })
+        body: JSON.stringify({ data: encrypted })
       }
     );
 
     const data = await response.json();
 
-    if (!data?.data?.checkout_url) {
-      return res.status(500).json({ error: "Checkout URL not received", data });
-    }
-
-    return res.status(200).json({
-      payment_url: data.data.checkout_url
-    });
+    res.status(200).json(data);
 
   } catch (err) {
-    return res.status(500).json({ error: "Payment creation failed" });
+    res.status(500).json({ error: err.message });
   }
 }
