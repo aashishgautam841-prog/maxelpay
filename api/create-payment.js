@@ -18,6 +18,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "amount or orderId missing" });
     }
 
+    const timestamp = Math.floor(Date.now() / 1000);
+
     const response = await fetch(
       "https://api.maxelpay.com/v1/prod/merchant/order/checkout",
       {
@@ -27,11 +29,12 @@ export default async function handler(req, res) {
           "Authorization": `Bearer ${process.env.MAXELPAY_API_SECRET}`
         },
         body: JSON.stringify({
-          order_id: orderId,
+          orderID: orderId,
           amount: amount,
           currency: "USD",
-          success_url: "https://greenleaf.website/payment-success",
-          cancel_url: "https://greenleaf.website/payment-failed"
+          timestamp: timestamp,
+          redirectUrl: "https://greenleaf.website/payment-success",
+          cancelUrl: "https://greenleaf.website/payment-failed"
         })
       }
     );
