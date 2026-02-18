@@ -31,6 +31,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           orderID: orderId,
           amount: amount,
+          userEmail: "aashishgautam841@gmail.com",
           currency: "USD",
           timestamp: timestamp,
           redirectUrl: "https://greenleaf.website/payment-success",
