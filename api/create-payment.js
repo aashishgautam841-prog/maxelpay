@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       timestamp: timestamp,
       userName: name,
       siteName: "GreenLeaf",
-      userEmail: email,
+      userEmail: "aashishgautam841@gmail.com",
       redirectUrl: "https://greenleaf.website/payment-success",
       websiteUrl: "https://greenleaf.website",
       cancelUrl: "https://greenleaf.website/payment-failed",
@@ -53,3 +53,4 @@ export default async function handler(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
