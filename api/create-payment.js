@@ -42,7 +42,7 @@ export default async function handler(req, res) {
     ).toString();
 
     const response = await fetch(
-      "https://api.maxelpay.com/v1/prod/merchant/order/checkout",
+      "https://api.maxelpay.com/v2/prod/merchant/order/checkout",
       {
         method: "POST",
         headers: {
@@ -60,6 +60,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: err.message });
   }
 }
+
 
 
 
