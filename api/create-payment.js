@@ -3,26 +3,32 @@ import CryptoJS from "crypto-js";
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://greenleaf.website");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, api-key"
+  );
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ success: false, message: "Method not allowed" });
   }
 
   try {
     const { amount, orderId, email, name } = req.body;
 
     const apiKey = process.env.MAXELPAY_API_KEY;
-    
     const secret = process.env.MAXELPAY_API_SECRET;
-   
+
     const timestamp = Math.floor(Date.now() / 1000);
 
     const payload = {
       orderID: orderId,
-      amount: amount,
+      amount,
       currency: "USD",
-      timestamp: timestamp,
+      timestamp,
       userName: name,
       siteName: "GreenLeaf",
       userEmail: email,
@@ -42,7 +48,7 @@ export default async function handler(req, res) {
     ).toString();
 
     const response = await fetch(
-      "https://api.maxelpay.com/v2/prod/merchant/order/checkout",
+      "https://api.maxelpay.com/v1/prod/merchant/order/checkout",
       {
         method: "POST",
         headers: {
@@ -57,13 +63,6 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 }
-
-
-
-
-
-
-
