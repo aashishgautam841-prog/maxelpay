@@ -1,13 +1,22 @@
-import CryptoJS from "crypto-js";
+const allowedOrigins = [
+  "https://greenleaf.website",
+  "https://maxelpay-sepia.vercel.app"
+];
 
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://greenleaf.website");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+const origin = req.headers.origin;
+if (allowedOrigins.includes(origin)) {
+  res.setHeader("Access-Control-Allow-Origin", origin);
+}
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+res.setHeader(
+  "Access-Control-Allow-Headers",
+  "Content-Type, content-type, Authorization"
+);
+
+if (req.method === "OPTIONS") {
+  return res.status(200).end();
+}
 
   try {
     const { amount, orderId, email, name } = req.body;
@@ -42,7 +51,7 @@ export default async function handler(req, res) {
     ).toString();
 
     const response = await fetch(
-      "https://api.maxelpay.com/v2/prod/merchant/order/checkout",
+      "https://api.maxelpay.com/v1/prod/merchant/order/checkout",
       {
         method: "POST",
         headers: {
