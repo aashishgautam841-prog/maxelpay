@@ -17,8 +17,9 @@ export default async function handler(req, res) {
 
     const apiKey = process.env.MAXELPAY_API_KEY;
     const secret = process.env.MAXELPAY_API_SECRET;
+    const merchantId = process.env.MAXELPAY_MERCHANT_ID;
 
-    if (!apiKey || !secret) {
+   if (!apiKey || !secret || !merchantId) {
       return res.status(500).json({ error: "Missing API credentials" });
     }
 
@@ -65,4 +66,5 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
+
 }
