@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, api-key"
+    "Content-Type, Authorization, X-API-KEY api-key"
   );
 
   if (req.method === "OPTIONS") {
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
       websiteUrl: "https://greenleaf.website",
       cancelUrl: "https://greenleaf.website/payment-failed",
       webhookUrl: "https://greenleaf.website/api/webhook"
+      
     };
 
     const key = CryptoJS.enc.Utf8.parse(secret);
@@ -68,3 +69,4 @@ export default async function handler(req, res) {
   }
 
 }
+
