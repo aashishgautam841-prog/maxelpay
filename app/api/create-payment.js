@@ -2,8 +2,11 @@ import CryptoJS from "crypto-js";
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://greenleaf.website");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, api-key"
+  );
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -13,9 +16,12 @@ export default async function handler(req, res) {
     const { amount, orderId, email, name } = req.body;
 
     const apiKey = process.env.MAXELPAY_API_KEY;
-    
     const secret = process.env.MAXELPAY_API_SECRET;
-   
+
+    if (!apiKey || !secret) {
+      return res.status(500).json({ error: "Missing API credentials" });
+    }
+
     const timestamp = Math.floor(Date.now() / 1000);
 
     const payload = {
@@ -54,16 +60,9 @@ export default async function handler(req, res) {
     );
 
     const data = await response.json();
-    return res.status(200).json(data);
+    return res.status(response.status).json(data);
 
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 }
-
-
-
-
-
-
-
